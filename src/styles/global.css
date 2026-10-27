@@ -12,8 +12,8 @@
   --accent-deep: #8c6a61; /* rose dark enough for focus rings and hover text */
 
   /* Type */
-  --serif: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-  --sans: 'Jost', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  --serif: 'Instrument Serif', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --sans: 'Instrument Sans', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
 
   /* Spacing — multiples of 8px */
   --s1: 0.5rem;  /* 8 */
@@ -32,6 +32,39 @@
 
 @media (min-width: 640px) { :root { --gutter: 48px; } }
 @media (min-width: 1100px) { :root { --gutter: 80px; } }
+
+/* ------------------------------------------------------------------
+   Fonts — Instrument Serif / Instrument Sans (SIL Open Font License),
+   served from src/assets/fonts/.
+   ------------------------------------------------------------------ */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/instrument-serif-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/instrument-serif-latin-400-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/instrument-sans-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../assets/fonts/instrument-sans-latin-500-normal.woff2') format('woff2');
+}
 
 /* ------------------------------------------------------------------
    Base
