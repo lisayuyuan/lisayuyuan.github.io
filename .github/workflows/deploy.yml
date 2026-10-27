@@ -25,6 +25,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          # The runner's preinstalled Node 22 can be older than Astro's minimum
+          # (22.23.4), so always fetch the newest 22.x release.
+          check-latest: true
           cache: npm
 
       # Keeps resized photos between builds so only new photos get processed.
