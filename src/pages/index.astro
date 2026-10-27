@@ -24,9 +24,14 @@ const widths = [640, 960, 1280, 1800, 2400].filter((w) => w <= hero.width);
 
     <div class="intro">
       {settings.tagline && <p class="tagline">{settings.tagline}</p>}
-      <a class="enter" href={url('/works/')}>
-        Works <span aria-hidden="true">→</span>
-      </a>
+      <nav class="enter-links" aria-label="Sections">
+        <a class="enter" href={url('/works/')}>
+          Works <span aria-hidden="true">→</span>
+        </a>
+        <a class="enter" href={url('/research/')}>
+          Research <span aria-hidden="true">→</span>
+        </a>
+      </nav>
     </div>
   </section>
 </Base>
@@ -70,6 +75,13 @@ const widths = [640, 960, 1280, 1800, 2400].filter((w) => w <= hero.width);
     font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
     line-height: 1.35;
     letter-spacing: 0.01em;
+  }
+
+  .enter-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--s1) var(--s6);
   }
 
   .enter {

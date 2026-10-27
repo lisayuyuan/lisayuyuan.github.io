@@ -2,11 +2,12 @@
 import { settings, url } from '../lib/site';
 
 interface Props {
-  section?: 'home' | 'works' | 'about';
+  section?: 'home' | 'works' | 'research' | 'about';
 }
 const { section } = Astro.props;
 const links = [
   { href: url('/works/'), label: 'Works', key: 'works' },
+  { href: url('/research/'), label: 'Research', key: 'research' },
   { href: url('/about/'), label: 'About', key: 'about' },
 ] as const;
 ---
@@ -31,9 +32,10 @@ const links = [
 <style>
   .site-header {
     display: flex;
+    flex-wrap: wrap; /* on narrow phones the nav drops below the name */
     align-items: baseline;
     justify-content: space-between;
-    gap: var(--s2);
+    gap: 0 var(--s2);
     padding-block: var(--s4) var(--s3);
   }
   @media (min-width: 640px) {
@@ -51,7 +53,7 @@ const links = [
 
   ul {
     display: flex;
-    gap: var(--s3);
+    gap: var(--s2);
     margin: 0;
     padding: 0;
     list-style: none;

@@ -4,3 +4,7 @@ dist/
 .DS_Store
 *.log
 .env
+
+# Original full-size photos kept on this computer only (e.g. 2026_10/, 2026_summar/).
+# The site uses the resized copies in src/assets/photos/.
+/[0-9][0-9][0-9][0-9]_*/

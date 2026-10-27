@@ -1,0 +1,82 @@
+---
+import Base from '../layouts/Base.astro';
+import { settings } from '../lib/site';
+import { research } from '../lib/research';
+
+const { intro, items } = research;
+---
+
+<Base title="Research" section="research" description={`Research by ${settings.name}.`}>
+  <article class="research wrap">
+    <h1>Research</h1>
+
+    {
+      intro.length > 0 && (
+        <div class="text">
+          {intro.map((p) => <p>{p}</p>)}
+        </div>
+      )
+    }
+
+    {
+      items.length > 0 && (
+        <ul class="items">
+          {items.map((item) => (
+            <li>
+              {item.year && <p class="label">{item.year}</p>}
+              <h2>{item.link ? <a href={item.link} rel="noopener">{item.title}</a> : item.title}</h2>
+              {item.details && <p class="details">{item.details}</p>}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  .research {
+    max-width: calc(36rem + 2 * var(--gutter));
+    margin-inline: auto;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.25rem, 1.8rem + 2vw, 3.5rem);
+    line-height: 1.1;
+    margin: var(--s4) 0 var(--s6);
+  }
+
+  .text p {
+    margin: 0 0 1.25em;
+    font-family: var(--serif);
+    font-size: 1.3125rem;
+    line-height: 1.6;
+  }
+
+  .items {
+    margin: var(--s6) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .items li {
+    padding-block: var(--s3);
+    border-top: 1px solid var(--line);
+  }
+  .items .label { margin: 0 0 var(--s1); }
+
+  h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+
+  .details {
+    margin: var(--s1) 0 0;
+    color: var(--muted);
+    white-space: pre-line;
+  }
+</style>
