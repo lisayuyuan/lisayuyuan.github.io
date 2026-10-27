@@ -8,10 +8,10 @@ import { settings } from '../../lib/site';
 const years = await getYears();
 ---
 
-<Base title="Works" section="works" description={`Photographs by ${settings.name}, newest first.`}>
+<Base title="Walks" section="walks" description={`Photographs by ${settings.name}, newest first.`}>
   <div class="wrap">
-    <header class="works-head">
-      <h1>Works</h1>
+    <header class="walks-head">
+      <h1>Walks</h1>
       {
         years.length > 1 && (
           <nav class="jump" aria-label="Jump to year">
@@ -44,7 +44,7 @@ const years = await getYears();
 </Base>
 
 <style>
-  .works-head {
+  .walks-head {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;

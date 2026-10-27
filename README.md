@@ -13,7 +13,7 @@ src/
   data/settings.json       ← name, home photo, tagline, About text, links
   components/              ← Header, Footer, PhotoSet (grid), Lightbox (viewer)
   layouts/Base.astro       ← shared <head>, fonts, header/footer
-  pages/                   ← Home, Works, Works/[year], About, 404
+  pages/                   ← Home, Walks, Research, About, 404
   styles/global.css        ← colours, fonts, spacing (all design tokens at the top)
 .github/workflows/deploy.yml ← automatic build + publish
 ```

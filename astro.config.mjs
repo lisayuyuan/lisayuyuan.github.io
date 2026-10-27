@@ -9,6 +9,10 @@ export default defineConfig({
   site: process.env.SITE_URL || 'https://lisayuyuan.github.io',
   base: process.env.BASE_PATH || '/',
   trailingSlash: 'ignore',
+  // The photo timeline used to live at /works/; keep old links working.
+  redirects: {
+    '/works': '/walks',
+  },
   build: {
     format: 'directory',
   },

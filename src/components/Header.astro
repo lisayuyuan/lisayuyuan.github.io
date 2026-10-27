@@ -2,11 +2,11 @@
 import { settings, url } from '../lib/site';
 
 interface Props {
-  section?: 'home' | 'works' | 'research' | 'about';
+  section?: 'home' | 'walks' | 'research' | 'about';
 }
 const { section } = Astro.props;
 const links = [
-  { href: url('/works/'), label: 'Works', key: 'works' },
+  { href: url('/walks/'), label: 'Walks', key: 'walks' },
   { href: url('/research/'), label: 'Research', key: 'research' },
   { href: url('/about/'), label: 'About', key: 'about' },
 ] as const;
