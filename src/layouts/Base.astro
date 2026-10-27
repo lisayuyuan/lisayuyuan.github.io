@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
-import scriptFont from '../assets/fonts/sacramento-latin-400-normal.woff2?url';
-import sansFont from '../assets/fonts/quicksand-latin-500-normal.woff2?url';
+import displayFont from '../assets/fonts/italiana-latin-400-normal.woff2?url';
+import sansFont from '../assets/fonts/jost-latin-300-normal.woff2?url';
 
 import { getImage } from 'astro:assets';
 import Header from '../components/Header.astro';
@@ -29,7 +29,7 @@ const ogImageUrl = new URL(ogImage.src, Astro.site);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script is:inline>document.documentElement.classList.add('js');</script>
-    <link rel="preload" href={scriptFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={sansFont} as="font" type="font/woff2" crossorigin />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />

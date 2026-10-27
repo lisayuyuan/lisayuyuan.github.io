@@ -69,9 +69,10 @@ const widths = [640, 960, 1280, 1800, 2400].filter((w) => w <= hero.width);
 
   .tagline {
     margin: 0;
-    font-family: var(--script);
+    font-family: var(--display);
+    letter-spacing: 0.04em;
     font-weight: 400;
-    font-size: clamp(2.25rem, 1.8rem + 2vw, 3.25rem);
+    font-size: clamp(1.75rem, 1.5rem + 1.2vw, 2.375rem);
     line-height: 1.2;
   }
 
@@ -84,6 +85,7 @@ const widths = [640, 960, 1280, 1800, 2400].filter((w) => w <= hero.width);
 
   .enter {
     font-size: 0.8125rem;
+    font-weight: 400;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     text-decoration: none;
