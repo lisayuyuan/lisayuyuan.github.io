@@ -1,0 +1,73 @@
+---
+import Base from '../layouts/Base.astro';
+import { settings } from '../lib/site';
+
+const { email, instagram } = settings;
+---
+
+<Base title="About" section="about" description={`About ${settings.name}.`}>
+  <article class="about wrap">
+    <h1>About</h1>
+
+    <div class="text">
+      {settings.about.map((p) => <p>{p}</p>)}
+    </div>
+
+    {
+      (email || instagram) && (
+        <section class="contact" aria-labelledby="contact-title">
+          <h2 id="contact-title" class="label">Contact</h2>
+          <ul>
+            {email && (
+              <li>
+                <a href={`mailto:${email}`}>{email}</a>
+              </li>
+            )}
+            {instagram && (
+              <li>
+                <a href={`https://www.instagram.com/${instagram}/`} rel="me noopener">
+                  Instagram · @{instagram}
+                </a>
+              </li>
+            )}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  .about {
+    max-width: calc(36rem + 2 * var(--gutter));
+    margin-inline: auto;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.25rem, 1.8rem + 2vw, 3.5rem);
+    line-height: 1.1;
+    margin: var(--s4) 0 var(--s6);
+  }
+
+  .text p {
+    margin: 0 0 1.25em;
+    font-family: var(--serif);
+    font-size: 1.3125rem;
+    line-height: 1.6;
+  }
+
+  .contact {
+    margin-top: var(--s8);
+    padding-top: var(--s4);
+    border-top: 1px solid var(--line);
+  }
+  .contact ul {
+    margin: var(--s2) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .contact li + li { margin-top: var(--s1); }
+  .contact a { display: inline-block; padding-block: 4px; }
+</style>

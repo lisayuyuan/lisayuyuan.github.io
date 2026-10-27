@@ -1,0 +1,227 @@
+---
+// The Works timeline: every photo, newest first, one per row.
+// Each photo keeps its own proportions — wide photos run wide, tall photos
+// stand narrower — and nothing is cropped.
+import { Image, getImage } from 'astro:assets';
+import type { YearSummary } from '../lib/sets';
+import { formatFullDate, isoDate } from '../lib/sets';
+import { settings } from '../lib/site';
+
+interface Props {
+  years: YearSummary[];
+}
+const { years } = Astro.props;
+
+// Only sizes a photo can actually provide (never upscale).
+const upTo = (max: number, list: number[]) => {
+  const ok = list.filter((w) => w < max);
+  if (max <= list[list.length - 1]) ok.push(max);
+  return ok;
+};
+
+const timeline = await Promise.all(
+  years.map(async (y) => ({
+    year: y.year,
+    note: settings.yearNotes.get(y.year),
+    sets: await Promise.all(
+      y.sets.map(async (set) => {
+        const meta = [formatFullDate(set.date), set.location].filter(Boolean).join(' · ');
+        const photos = await Promise.all(
+          set.photos.map(async (p) => {
+            const ratio = p.image.width / p.image.height;
+            const large = await getImage({
+              src: p.image,
+              widths: upTo(p.image.width, [800, 1400, 2000, 2600]),
+              format: 'webp',
+              quality: 84,
+            });
+            return {
+              ...p,
+              ratio,
+              large,
+              widths: upTo(p.image.width, [480, 800, 1100, 1500, 2000]),
+              // Displayed width is the smallest of: the column, 82% of the
+              // screen height × the photo's proportions. Tell the browser so it
+              // downloads a file of the right size.
+              sizes: `min(1100px, calc(100vw - 32px), calc(82vh * ${ratio.toFixed(3)}))`,
+            };
+          }),
+        );
+        return { ...set, meta, photos };
+      }),
+    ),
+  })),
+);
+---
+
+<div class="stream">
+  {
+    timeline.map((y) => (
+      <section class="year" id={`y${y.year}`} aria-labelledby={`y${y.year}-title`}>
+        <header class="year-mark">
+          <h2 id={`y${y.year}-title`}>{y.year}</h2>
+          {y.note && <p class="year-note">{y.note}</p>}
+        </header>
+
+        {y.sets.map((set) => (
+          <article class="set" aria-label={set.title ? `${set.title}, ${set.meta}` : set.meta}>
+            <p class="set-label">
+              <time datetime={isoDate(set.date)}>{set.meta}</time>
+              {set.title && <span class="set-title">{set.title}</span>}
+            </p>
+            {set.note && <p class="set-note">{set.note}</p>}
+
+            {set.photos.map((p) => (
+              <figure class="item" style={`--r: ${p.ratio.toFixed(4)}`}>
+                <a
+                  class="frame"
+                  href={p.large.src}
+                  data-lightbox
+                  data-srcset={p.large.srcSet.attribute}
+                  data-w={p.image.width}
+                  data-h={p.image.height}
+                  data-caption={p.caption ?? set.title ?? ''}
+                  data-meta={set.meta}
+                  data-note={set.note ?? ''}
+                >
+                  <Image
+                    src={p.image}
+                    alt={p.alt}
+                    widths={p.widths}
+                    sizes={p.sizes}
+                    quality={82}
+                    loading="lazy"
+                    decoding="async"
+                    class="photo fade"
+                  />
+                </a>
+                {p.caption && <figcaption>{p.caption}</figcaption>}
+              </figure>
+            ))}
+          </article>
+        ))}
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .stream {
+    --col: 1100px;
+    --max-h: 82svh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Year marker: a large quiet numeral between years */
+  .year + .year { margin-top: clamp(6rem, 18vh, 12rem); }
+  .year-mark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s1);
+    margin-bottom: clamp(3rem, 10vh, 6rem);
+    text-align: center;
+    scroll-margin-top: var(--s4);
+  }
+  .year-mark h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(3rem, 2.2rem + 4vw, 5.5rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .year-note {
+    margin: 0;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.125rem;
+    color: var(--muted);
+  }
+
+  /* A set: a small date line, then its photos one under another */
+  .set {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(2.5rem, 9vh, 5.5rem);
+  }
+  .set + .set { margin-top: clamp(5rem, 16vh, 10rem); }
+
+  .set-label {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0 var(--s2);
+    margin: 0 0 calc(-1 * clamp(1.5rem, 6vh, 4rem));
+    text-align: center;
+  }
+  .set-label time {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .set-label time::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 0.75em;
+    border-radius: 50%;
+    background: var(--accent);
+    vertical-align: 0.2em;
+  }
+  .set-title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.25rem;
+  }
+  .set-note {
+    max-width: 34rem;
+    margin: 0 0 calc(-1 * clamp(1rem, 4vh, 3rem));
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  /* One photo per row, sized by its own proportions */
+  .item {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s1);
+    width: min(100%, var(--col), calc(var(--r) * var(--max-h)));
+  }
+  .frame {
+    display: block;
+    width: 100%;
+    background: var(--surface);
+    cursor: zoom-in;
+  }
+  .frame :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--r);
+  }
+  @media (hover: hover) {
+    .frame:hover :global(img.is-loaded) { opacity: 0.94; }
+  }
+  .frame:focus-visible { outline-offset: 6px; }
+
+  figcaption {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  @media (max-width: 639px) {
+    .stream { --max-h: 78svh; }
+  }
+</style>

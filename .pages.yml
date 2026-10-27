@@ -1,0 +1,126 @@
+# Pages CMS configuration — this file defines the visual editor at https://app.pagescms.org
+# You normally never need to touch it.
+
+media:
+  input: src/assets/photos      # where uploaded photos are stored in the repository
+  output: /photos               # how they are referred to inside content files
+  extensions: [jpg, jpeg, png, webp]
+  rename: random                # avoids two different photos both named IMG_0001.jpg
+
+content:
+  - name: sets
+    label: Photo sets
+    type: collection
+    path: src/content/sets
+    format: yaml-frontmatter
+    filename:
+      template: "{date}-{title}.md"
+      field: false
+    view:
+      fields: [date, title, location]
+      primary: date
+      sort: [date]
+      search: [title, location, note]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: date
+        label: Date
+        type: date
+        required: true
+        description: The set is filed under this date's year automatically.
+      - name: title
+        label: Title
+        type: string
+        description: Optional, a few words (e.g. "autumn walk").
+      - name: location
+        label: Location
+        type: string
+        description: Optional (e.g. "Durham").
+      - name: note
+        label: Note
+        type: text
+        description: Optional, one short sentence shown under the date.
+      - name: draft
+        label: Hide this set (draft)
+        type: boolean
+        default: false
+      - name: photos
+        label: Photos
+        type: object
+        required: true
+        list:
+          min: 1
+          collapsible:
+            collapsed: false
+            summary: "{index}. {alt}"
+        fields:
+          - name: image
+            label: Photo
+            type: image
+            required: true
+            description: JPEG around 2500px on the long side works best.
+          - name: alt
+            label: Description (alt text)
+            type: string
+            required: true
+            description: What is in the picture, in a few plain words. Read aloud to visitors who can't see the image.
+          - name: caption
+            label: Caption
+            type: string
+            description: Optional, shown under the photo when it is enlarged.
+
+  - name: settings
+    label: Site settings
+    type: file
+    path: src/data/settings.json
+    format: json
+    fields:
+      - name: name
+        label: Name shown on the site
+        type: string
+        required: true
+      - name: tagline
+        label: Home page sentence
+        type: string
+      - name: heroImage
+        label: Home photo
+        type: image
+        required: true
+      - name: heroAlt
+        label: Home photo description (alt text)
+        type: string
+        required: true
+      - name: description
+        label: Search-engine description
+        type: text
+        description: One sentence shown in Google results and link previews.
+      - name: about
+        label: About text
+        type: text
+        description: Leave an empty line between paragraphs.
+      - name: email
+        label: Email
+        type: string
+        description: Optional. Leave empty to hide.
+      - name: instagram
+        label: Instagram username
+        type: string
+        description: Optional, without the @. Leave empty to hide.
+      - name: yearNotes
+        label: Year notes
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{year}"
+        description: Optional one-line note shown at the top of a year's page.
+        fields:
+          - name: year
+            label: Year
+            type: number
+            required: true
+          - name: note
+            label: Note
+            type: string

@@ -1,0 +1,88 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { settings, url } from '../lib/site';
+
+const hero = settings.hero.image;
+const widths = [640, 960, 1280, 1800, 2400].filter((w) => w <= hero.width);
+---
+
+<Base section="home">
+  <section class="home wrap" aria-label="Introduction">
+    <figure class="hero">
+      <Image
+        src={hero}
+        alt={settings.hero.alt}
+        widths={widths.length ? widths : [hero.width]}
+        sizes="(max-width: 639px) calc(100vw - 48px), min(1200px, 90vw)"
+        quality={84}
+        loading="eager"
+        fetchpriority="high"
+        class="photo fade"
+      />
+    </figure>
+
+    <div class="intro">
+      {settings.tagline && <p class="tagline">{settings.tagline}</p>}
+      <a class="enter" href={url('/works/')}>
+        Works <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: var(--s2);
+  }
+
+  .hero {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  .hero :global(img) {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: min(78svh, 900px);
+    object-fit: contain;
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s3);
+    margin-top: var(--s6);
+    text-align: center;
+  }
+
+  .tagline {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+  }
+
+  .enter {
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    padding-block: var(--s1);
+  }
+  .enter span {
+    display: inline-block;
+    transition: transform 0.4s var(--ease);
+  }
+  .enter:hover span { transform: translateX(4px); }
+</style>

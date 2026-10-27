@@ -1,0 +1,282 @@
+---
+// Full-screen photo viewer. Works with every link marked `data-lightbox` on the page.
+// Without JavaScript the links simply open the large photo directly.
+---
+
+<dialog class="lightbox" aria-label="Photo viewer" aria-describedby="lb-caption">
+  <figure class="lb-stage">
+    <img class="lb-img" alt="" decoding="async" />
+  </figure>
+
+  <div class="lb-bar">
+    <p class="lb-caption" id="lb-caption">
+      <span class="lb-text"></span>
+      <span class="lb-meta"></span>
+      <span class="lb-note"></span>
+    </p>
+    <p class="lb-count" aria-live="polite"></p>
+  </div>
+
+  <button class="lb-btn lb-prev" type="button" aria-label="Previous photo">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+  </button>
+  <button class="lb-btn lb-next" type="button" aria-label="Next photo">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+  </button>
+  <button class="lb-btn lb-close" type="button" aria-label="Close viewer" autofocus>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+  </button>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('dialog.lightbox');
+  const tiles = [...document.querySelectorAll<HTMLAnchorElement>('a[data-lightbox]')];
+
+  if (dialog && tiles.length && typeof dialog.showModal === 'function') {
+    const img = dialog.querySelector<HTMLImageElement>('.lb-img')!;
+    const stage = dialog.querySelector<HTMLElement>('.lb-stage')!;
+    const text = dialog.querySelector<HTMLElement>('.lb-text')!;
+    const meta = dialog.querySelector<HTMLElement>('.lb-meta')!;
+    const note = dialog.querySelector<HTMLElement>('.lb-note')!;
+    const count = dialog.querySelector<HTMLElement>('.lb-count')!;
+    const prev = dialog.querySelector<HTMLButtonElement>('.lb-prev')!;
+    const next = dialog.querySelector<HTMLButtonElement>('.lb-next')!;
+    const close = dialog.querySelector<HTMLButtonElement>('.lb-close')!;
+    const single = tiles.length === 1;
+    let index = 0;
+
+    if (single) {
+      prev.hidden = true;
+      next.hidden = true;
+    }
+
+    const preload = (tile: HTMLAnchorElement) => {
+      const pre = new Image();
+      pre.sizes = '100vw';
+      if (tile.dataset.srcset) pre.srcset = tile.dataset.srcset;
+      pre.src = tile.href;
+    };
+
+    const show = (n: number) => {
+      index = (n + tiles.length) % tiles.length;
+      const tile = tiles[index];
+      const thumb = tile.querySelector('img');
+
+      img.classList.remove('is-loaded');
+      img.removeAttribute('src');
+      img.removeAttribute('srcset');
+      img.width = Number(tile.dataset.w) || 0;
+      img.height = Number(tile.dataset.h) || 0;
+      img.alt = thumb?.alt ?? '';
+      img.sizes = '100vw';
+      if (tile.dataset.srcset) img.srcset = tile.dataset.srcset;
+      img.src = tile.href;
+
+      text.textContent = tile.dataset.caption ?? '';
+      text.hidden = !tile.dataset.caption;
+      meta.textContent = tile.dataset.meta ?? '';
+      note.textContent = tile.dataset.note ?? '';
+      note.hidden = !tile.dataset.note;
+      count.textContent = single ? '' : `${index + 1} / ${tiles.length}`;
+
+      if (!single) {
+        preload(tiles[(index + 1) % tiles.length]);
+        preload(tiles[(index - 1 + tiles.length) % tiles.length]);
+      }
+    };
+
+    img.addEventListener('load', () => img.classList.add('is-loaded'));
+    img.addEventListener('error', () => img.classList.add('is-loaded'));
+
+    const open = (n: number) => {
+      show(n);
+      document.documentElement.classList.add('lb-open');
+      dialog.showModal();
+    };
+
+    tiles.forEach((tile, n) => {
+      tile.addEventListener('click', (e) => {
+        // Let ctrl/cmd-click open the photo in a new tab as usual.
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        open(n);
+      });
+    });
+
+    dialog.addEventListener('close', () => {
+      document.documentElement.classList.remove('lb-open');
+      img.removeAttribute('src');
+      img.removeAttribute('srcset');
+      // Return to the photo that was last viewed.
+      const tile = tiles[index];
+      tile.focus({ preventScroll: true });
+      tile.scrollIntoView({ block: 'nearest' });
+    });
+
+    prev.addEventListener('click', () => show(index - 1));
+    next.addEventListener('click', () => show(index + 1));
+    close.addEventListener('click', () => dialog.close());
+
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(index - 1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); show(index + 1); }
+    });
+
+    // Clicking the empty area around the photo closes the viewer.
+    stage.addEventListener('click', (e) => {
+      if (e.target === stage) dialog.close();
+    });
+
+    // Swipe left / right on touch screens.
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return;
+      tracking = true;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+    stage.addEventListener('pointerup', (e) => {
+      if (!tracking) return;
+      tracking = false;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (!single && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        show(dx < 0 ? index + 1 : index - 1);
+      } else if (Math.abs(dy) > 90 && Math.abs(dy) > Math.abs(dx) * 1.5) {
+        dialog.close(); // swipe down/up to close
+      }
+    });
+    stage.addEventListener('pointercancel', () => (tracking = false));
+  }
+</script>
+
+<style>
+  :global(html.lb-open) { overflow: hidden; }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+  .lightbox[open] {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    animation: lb-in 0.35s var(--ease);
+  }
+  .lightbox::backdrop { background: rgb(241 238 233 / 0.6); }
+
+  @keyframes lb-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .lb-stage {
+    margin: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 16px 8px;
+    touch-action: pan-y pinch-zoom;
+  }
+  @media (min-width: 640px) {
+    .lb-stage { padding: 72px 96px 8px; }
+  }
+
+  .lb-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.45s var(--ease);
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .lb-img:global(.is-loaded) { opacity: 1; }
+
+  .lb-bar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s2);
+    padding: var(--s2) var(--gutter) var(--s3);
+    min-height: 72px;
+  }
+  .lb-bar p { margin: 0; }
+  .lb-caption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--s2);
+  }
+  .lb-text {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.125rem;
+  }
+  .lb-note {
+    flex-basis: 100%;
+    font-family: var(--serif);
+    font-size: 1rem;
+    color: var(--muted);
+  }
+  .lb-meta,
+  .lb-count {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .lb-count { white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  .lb-btn {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.3s var(--ease), background-color 0.3s var(--ease);
+  }
+  .lb-btn:hover { color: var(--text); background: rgb(196 169 161 / 0.18); }
+  .lb-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .lb-close { top: 12px; right: 12px; }
+  .lb-prev,
+  .lb-next { top: 50%; transform: translateY(-50%); }
+  .lb-prev { left: 24px; }
+  .lb-next { right: 24px; }
+
+  /* On phones, arrows move next to the counter so they don't cover the photo */
+  @media (max-width: 639px) {
+    .lb-prev,
+    .lb-next { top: auto; bottom: 64px; transform: none; }
+    .lb-prev { left: 8px; }
+    .lb-next { right: 8px; }
+    .lb-stage { padding-bottom: 56px; }
+  }
+</style>

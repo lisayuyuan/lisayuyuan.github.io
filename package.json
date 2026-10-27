@@ -1,0 +1,20 @@
+{
+  "name": "yuyuan-lisa",
+  "version": "1.0.0",
+  "description": "Photography portfolio of Yuyuan Lisa",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/jost": "^5.3.0",
+    "astro": "^7.4.2"
+  },
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.23.4"
+  }
+}

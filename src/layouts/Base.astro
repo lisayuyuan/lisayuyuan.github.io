@@ -1,0 +1,70 @@
+---
+import '@fontsource/cormorant-garamond/300.css';
+import '@fontsource/cormorant-garamond/400.css';
+import '@fontsource/cormorant-garamond/400-italic.css';
+import '@fontsource/jost/400.css';
+import '@fontsource/jost/500.css';
+import '../styles/global.css';
+
+import { getImage } from 'astro:assets';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { settings, url } from '../lib/site';
+
+interface Props {
+  /** Page title; the site name is added automatically. */
+  title?: string;
+  description?: string;
+  /** Which nav item is active. */
+  section?: 'home' | 'works' | 'about';
+}
+
+const { title, description = settings.description, section } = Astro.props;
+const fullTitle = title ? `${title} — ${settings.name}` : settings.name;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = await getImage({ src: settings.hero.image, width: 1200, format: 'jpg', quality: 80 });
+const ogImageUrl = new URL(ogImage.src, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <meta name="theme-color" content="#f1eee9" />
+    <meta name="color-scheme" content="light" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={settings.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header section={section} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Fade each photo in once it has loaded (images below the fold load lazily).
+      const reveal = (img: HTMLImageElement) => img.classList.add('is-loaded');
+      document.querySelectorAll<HTMLImageElement>('img.fade').forEach((img) => {
+        if (img.complete) reveal(img);
+        else {
+          img.addEventListener('load', () => reveal(img), { once: true });
+          img.addEventListener('error', () => reveal(img), { once: true });
+        }
+      });
+    </script>
+  </body>
+</html>

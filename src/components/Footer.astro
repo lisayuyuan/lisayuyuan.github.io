@@ -1,0 +1,20 @@
+---
+import { settings } from '../lib/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer wrap">
+  <p>© {year} {settings.name}. All photographs by {settings.name}.</p>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: var(--s12) var(--s4);
+  }
+  p {
+    margin: 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+</style>
