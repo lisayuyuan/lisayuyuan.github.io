@@ -12,8 +12,8 @@
   --accent-deep: #8c6a61; /* rose dark enough for focus rings and hover text */
 
   /* Type */
-  --serif: 'Instrument Serif', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-  --sans: 'Instrument Sans', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  --script: 'Sacramento', 'Segoe Script', 'Brush Script MT', cursive; /* name, titles — keep letter-spacing 0 */
+  --sans: 'Quicksand', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
 
   /* Spacing — multiples of 8px */
   --s1: 0.5rem;  /* 8 */
@@ -34,36 +34,36 @@
 @media (min-width: 1100px) { :root { --gutter: 80px; } }
 
 /* ------------------------------------------------------------------
-   Fonts — Instrument Serif / Instrument Sans (SIL Open Font License),
+   Fonts — Sacramento / Quicksand (SIL Open Font License),
    served from src/assets/fonts/.
    ------------------------------------------------------------------ */
 @font-face {
-  font-family: 'Instrument Serif';
+  font-family: 'Sacramento';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../assets/fonts/instrument-serif-latin-400-normal.woff2') format('woff2');
+  src: url('../assets/fonts/sacramento-latin-400-normal.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Instrument Serif';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../assets/fonts/instrument-serif-latin-400-italic.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Instrument Sans';
+  font-family: 'Quicksand';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../assets/fonts/instrument-sans-latin-400-normal.woff2') format('woff2');
+  src: url('../assets/fonts/quicksand-latin-400-normal.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Instrument Sans';
+  font-family: 'Quicksand';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('../assets/fonts/instrument-sans-latin-500-normal.woff2') format('woff2');
+  src: url('../assets/fonts/quicksand-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Quicksand';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/quicksand-latin-600-normal.woff2') format('woff2');
 }
 
 /* ------------------------------------------------------------------
@@ -86,7 +86,7 @@ body {
   color: var(--text);
   font-family: var(--sans);
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }

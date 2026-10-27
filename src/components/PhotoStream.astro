@@ -125,17 +125,14 @@ const timeline = await Promise.all(
     scroll-margin-top: var(--s4);
   }
   .year-mark h2 {
-    font-family: var(--serif);
+    font-family: var(--script);
     font-weight: 400;
-    font-size: clamp(3rem, 2.2rem + 4vw, 5.5rem);
+    font-size: clamp(4rem, 3rem + 5vw, 7rem);
     line-height: 1;
-    letter-spacing: -0.01em;
   }
   .year-note {
     margin: 0;
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 1.125rem;
+    font-size: 1rem;
     color: var(--muted);
   }
 
@@ -174,16 +171,15 @@ const timeline = await Promise.all(
     vertical-align: 0.2em;
   }
   .set-title {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 1.25rem;
+    font-family: var(--script);
+    font-size: 2rem;
+    line-height: 1;
   }
   .set-note {
     max-width: 34rem;
     margin: 0 0 calc(-1 * clamp(1rem, 4vh, 3rem));
-    font-family: var(--serif);
-    font-size: 1.125rem;
-    line-height: 1.5;
+    font-size: 1rem;
+    line-height: 1.6;
     text-align: center;
     color: var(--muted);
   }
@@ -214,9 +210,7 @@ const timeline = await Promise.all(
   .frame:focus-visible { outline-offset: 6px; }
 
   figcaption {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 1rem;
+    font-size: 0.9375rem;
     color: var(--muted);
     text-align: center;
   }
